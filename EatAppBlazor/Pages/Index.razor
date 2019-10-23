@@ -1,0 +1,22 @@
+﻿@page "/"
+@using TempData;
+@using Extensions;
+@using Models;
+
+@if (Session.IsExist)
+{
+
+    <h1>Hello, @state.Username</h1>
+    <p>You role is: @state.Role<br />Your session is authenticated on @state.AuthTime.ToDbDateTimeString()</p>
+}
+else
+{
+    <h1>Hello, anonymous!</h1>
+    <p>Welcome to your new app. Login to do more!</p>
+}
+
+@code {
+
+    private SessionState state = Session.GetCurrent();
+}
+

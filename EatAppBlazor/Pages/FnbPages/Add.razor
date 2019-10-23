@@ -1,0 +1,48 @@
+﻿@page "/fnb/add"
+
+@using Common;
+@using Services;
+@inject IRestApiService api;
+
+<button class="btn btn-primary" onclick="window.location.href='/fnb'">← Back</button>
+<h1>Food &amp; Beverage: Add</h1>
+
+<div>
+    <div class="form-group">
+        <label>Name</label>
+        <input placeholder="Name" class="form-control" @bind="name" />
+        <label>Type of F&amp;B</label>
+        <select @bind="type" class="custom-select">
+            <option value="0">Food</option>
+            <option value="1">Beverage</option>
+        </select>
+        <br />
+        Result: @result
+    </div>
+    <button class="btn btn-primary" @onclick="AddFnb">Add new</button>
+</div>
+
+@code {
+
+    private string name;
+    private string result = "Unavailable yet";
+    private int type = 0;
+    async Task AddFnb()
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            result = "Name is required";
+        else
+        {
+            result = "Please wait..";
+
+            if (await api.IsAccessibleAsync())
+            {
+                var fnbType = type == 0 ? FnbType.Food : FnbType.Baverage;
+                result = await api.AddFnbAsync(name, fnbType);
+                name = null;
+            }
+            else
+                result = "API unavailable";
+        }
+    }
+}

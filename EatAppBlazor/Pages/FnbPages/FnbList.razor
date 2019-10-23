@@ -1,0 +1,85 @@
+﻿@page "/fnb"
+
+@using System.Diagnostics;
+@using Models;
+@using Services;
+@using Extensions;
+@using TempData
+
+@inject IRestApiService api;
+
+<button class="btn btn-primary" @onclick="ListAll">Reload</button>
+@if (Session.IsExist)
+{
+    <button class="btn btn-info" onclick="window.location.href='/fnb/add'">Add new</button>
+}
+<h1>Food &amp; Beverage</h1>
+
+@if (fnbList.Count == 0)
+{
+    <p>Click on "Reload" button to fetch data</p>
+    if (isRefreshing)
+    {
+        <p><i>Please wait. Refreshing data...</i></p>
+    }
+}
+else
+{
+    if (isRefreshing)
+    {
+        <p><i>Please wait. Refreshing data...</i></p>
+    }
+    else
+    {
+        <p>Total FnB: @fnbList.Count | Reloaded at: @DateTime.Now.ToDbDateTimeString() | Takes @elapsed</p>
+
+        <table id="table" class="table">
+            <thead>
+                <tr>
+                    <td>Id</td>
+                    <td>Fnb Name</td>
+                    <td>Type</td>
+                    <td>Created on</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in fnbList)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.FnbType</td>
+                        <td>@item.CreatedTime.ToDbDateTimeString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+
+    private TimeSpan elapsed;
+    private bool isRefreshing = false;
+    List<Fnb> fnbList = new List<Fnb>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ListAll();
+    }
+
+    async Task ListAll()
+    {
+        Stopwatch sw = Stopwatch.StartNew();
+        isRefreshing = true;
+
+        if (await api.IsAccessibleAsync())
+        {
+            fnbList = await api.ListAllFnbAsync();
+            isRefreshing = false;
+            sw.Stop();
+            elapsed = sw.Elapsed;
+        }
+    }
+}

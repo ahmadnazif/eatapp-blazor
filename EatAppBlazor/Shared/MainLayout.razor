@@ -1,0 +1,39 @@
+﻿@inherits LayoutComponentBase
+@using TempData
+@inject NavigationManager NavigationManager
+
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+<div class="main">
+    <div class="top-row px-4">
+        @if (Session.IsExist)
+        {
+            <button class="btn btn-info" @onclick="NavigateToProfile">Profile</button><p>&nbsp;</p>
+            <button class="btn btn-danger" @onclick="LogoutAndRedirectToLogin">Logout</button>
+        }
+        else
+        {
+            <button class="btn btn-info" onclick="window.location.href='auth/login'">Login</button>
+        }
+    </div>
+
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+
+@code {
+
+    void LogoutAndRedirectToLogin()
+    {
+        Session.Destroy();
+        NavigationManager.NavigateTo("/auth/login", true);
+    }
+
+    void NavigateToProfile()
+    {
+        NavigationManager.NavigateTo("/acc/profile");
+    }
+}
