@@ -1,5 +1,6 @@
 ﻿using EatAppBlazor.Common;
 using EatAppBlazor.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,11 @@ namespace EatAppBlazor.Services
     {
         public const string JWT_BEARER_SCHEME = "Bearer";
         private readonly HttpClient client = new HttpClient();
-        public readonly string baseUrl = "https://eatapi-254203.appspot.com";
-
         private readonly JsonSerializerOptions JSON_OPT = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-        public RestApiService()
+        public RestApiService(IConfiguration config)
         {
-            client.BaseAddress = new Uri(baseUrl);
+            client.BaseAddress = new Uri(config["ApiBaseUrl"]);
 
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
