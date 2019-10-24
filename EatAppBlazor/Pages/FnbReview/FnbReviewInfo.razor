@@ -1,0 +1,117 @@
+﻿@page "/fnb-review/{Id}/{FnbName}/{FnbType}/{CreateTime}"
+
+@using System.Diagnostics
+@using Extensions
+@inject NavigationManager NavigationManager
+@inject Services.IRestApiService api
+
+<button class="btn btn-primary" onclick="window.location.href='/fnb'">← Back</button>
+<button class="btn btn-primary" @onclick="(async() => await LoadReviewAsync())">Reload</button>
+<h1>Food &amp; Beverage: Review</h1>
+
+<h3>Name: @FnbName</h3>
+<p>Type: @FnbType | Created time: @CreateTime</p>
+<p>Click on "Reload" button to fetch data</p>
+
+@if (fnbComments.Count == 0)
+{
+    if (isRefreshing)
+    {
+        <p><i>@REFRESHING_DATA</i></p>
+    }
+}
+else
+{
+    if (isRefreshing)
+    {
+        <p><i>@REFRESHING_DATA</i></p>
+    }
+    else
+    {
+        <p>Total comment: @fnbComments.Count | Reloaded at: @DateTime.Now.ToDbDateTimeString() | Takes @elapsed</p>
+
+        <table id="table" class="table">
+            <thead>
+                <tr>
+                    <td>Commenter</td>
+                    <td>Comment</td>
+                    <td>Created on</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in fnbComments)
+                {
+                    <tr>
+                        <td>@GetCommenterName(item.CommenterId)</td>
+                        <td>@item.Comment</td>
+                        <td>@item.CreatedTime.ToDbDateTimeString()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+
+
+@code {
+
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public string FnbName { get; set; }
+    [Parameter]
+    public string FnbType { get; set; }
+    [Parameter]
+    public string CreateTime { get; set; }
+
+    private List<Models.FnbComment> fnbComments = new List<Models.FnbComment>();
+    private List<Models.UserProfile> allUserList = new List<Models.UserProfile>();
+    private bool isRefreshing = false;
+    private TimeSpan elapsed;
+    private const string REFRESHING_DATA = "Please wait. Refreshing data...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        //var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+        //Id = QueryStringHelper.GetValue(uri, "id");
+        //await Task.Delay(1000);
+        //await LoadFnbAsync();
+
+        await LoadAllUserAsync();
+        await LoadReviewAsync();
+    }
+
+    private async Task LoadReviewAsync()
+    {
+        isRefreshing = true;
+        Stopwatch sw = Stopwatch.StartNew();
+        if (await api.IsAccessibleAsync())
+        {
+            fnbComments = await api.ListAllFnbCommentAsync(int.Parse(Id));
+            sw.Stop();
+            elapsed = sw.Elapsed;
+            isRefreshing = false;
+        }
+    }
+
+    private async Task LoadAllUserAsync()
+    {
+        if(await api.IsAccessibleAsync())
+        {
+            allUserList = await api.ListAllUserAsync();
+        }
+    }
+
+    private string GetCommenterName(int commenterId)
+    {
+        var user = allUserList.Where(d => d.Id == commenterId).SingleOrDefault();
+        if (user == null)
+            return $"Deleted (ID: {commenterId})";
+        else
+            return user.Username;
+
+    }
+
+}

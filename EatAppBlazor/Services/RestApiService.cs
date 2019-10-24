@@ -72,7 +72,7 @@ namespace EatAppBlazor.Services
                 if (resp.IsSuccessStatusCode)
                 {
                     var json = await resp.Content.ReadAsStringAsync();
-                    return JsonSerializer.Deserialize<List<UserProfile>>(json);
+                    return JsonSerializer.Deserialize<List<UserProfile>>(json, JSON_OPT);
                 }
 
                 return new List<UserProfile>();
@@ -196,6 +196,26 @@ namespace EatAppBlazor.Services
             }
         }
 
+        public async Task<Fnb> GetFnbAsync(int fnbId)
+        {
+            try
+            {
+                var resp = await client.GetAsync($"api/fnb/get-by-id?id={fnbId}");
+                if (resp.IsSuccessStatusCode)
+                {
+                    var json = await resp.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<Fnb>(json, JSON_OPT);
+                }
+                else
+                    return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
         public async Task<string> AddFnbAsync(string fnbName, FnbType fnbType)
         {
             try
@@ -224,7 +244,7 @@ namespace EatAppBlazor.Services
                 if (resp.IsSuccessStatusCode)
                 {
                     var json = await resp.Content.ReadAsStringAsync();
-                    return JsonSerializer.Deserialize<List<FnbComment>>(json);
+                    return JsonSerializer.Deserialize<List<FnbComment>>(json, JSON_OPT);
                 }
                 else
                     return new List<FnbComment>();

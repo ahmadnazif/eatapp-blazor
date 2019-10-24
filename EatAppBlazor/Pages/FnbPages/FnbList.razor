@@ -1,12 +1,13 @@
 ﻿@page "/fnb"
 
-@using System.Diagnostics;
-@using Models;
-@using Services;
-@using Extensions;
+@using System.Diagnostics
+@using Models
+@using Services
+@using Extensions
 @using TempData
 
-@inject IRestApiService api;
+@inject IRestApiService api
+@inject NavigationManager NavigationManager
 
 <button class="btn btn-primary" @onclick="ListAll">Reload</button>
 @if (Session.IsExist)
@@ -20,14 +21,14 @@
     <p>Click on "Reload" button to fetch data</p>
     if (isRefreshing)
     {
-        <p><i>Please wait. Refreshing data...</i></p>
+        <p><i>@REFRESHING_DATA</i></p>
     }
 }
 else
 {
     if (isRefreshing)
     {
-        <p><i>Please wait. Refreshing data...</i></p>
+        <p><i>@REFRESHING_DATA</i></p>
     }
     else
     {
@@ -40,6 +41,7 @@ else
                     <td>Fnb Name</td>
                     <td>Type</td>
                     <td>Created on</td>
+                    <td>Option</td>
                 </tr>
             </thead>
             <tbody>
@@ -50,6 +52,7 @@ else
                         <td>@item.Name</td>
                         <td>@item.FnbType</td>
                         <td>@item.CreatedTime.ToDbDateTimeString()</td>
+                        <td><button class="btn btn-dark" @onclick="@(() => NavigateToFnbReview(item))">Review</button></td>
                     </tr>
                 }
             </tbody>
@@ -59,6 +62,7 @@ else
 
 @code {
 
+    private const string REFRESHING_DATA = "Please wait. Refreshing data...";
     private TimeSpan elapsed;
     private bool isRefreshing = false;
     List<Fnb> fnbList = new List<Fnb>();
@@ -81,5 +85,11 @@ else
             sw.Stop();
             elapsed = sw.Elapsed;
         }
+    }
+
+    async Task NavigateToFnbReview(Fnb fnb)
+    {
+        //NavigationManager.NavigateTo($"fnb-review?id={id}");
+        NavigationManager.NavigateTo($"fnb-review/{fnb.Id}/{fnb.Name}/{fnb.FnbType}/{fnb.CreatedTime.ToDbDateTimeString()}");
     }
 }

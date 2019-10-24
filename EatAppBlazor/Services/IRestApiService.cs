@@ -17,6 +17,7 @@ namespace EatAppBlazor.Services
         Task<string> AddUserAsync(string username, string password, string email, UserRole role);
         Task<UserAuthResponse> UpdateUserAsync(string username, string email, string fullname);
         Task<List<Fnb>> ListAllFnbAsync();
+        Task<Fnb> GetFnbAsync(int fnbId);
         Task<string> AddFnbAsync(string fnbName, FnbType fnbType);
         Task<List<FnbComment>> ListAllFnbCommentAsync(int fnbId);
         Task<int> CountAllFnbCommentAsync(int fnbId);
