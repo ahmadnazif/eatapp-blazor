@@ -3,7 +3,7 @@
 @using System.Diagnostics
 @using Extensions
 @inject NavigationManager NavigationManager
-@inject Services.IRestApiService api
+@inject Services.EatAppRestApiService api
 
 <button class="btn btn-primary" onclick="window.location.href='/fnb'">← Back</button>
 <button class="btn btn-primary" @onclick="(async() => await LoadReviewAsync())">Reload</button>

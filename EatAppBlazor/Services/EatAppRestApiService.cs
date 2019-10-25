@@ -12,18 +12,20 @@ using System.Threading.Tasks;
 
 namespace EatAppBlazor.Services
 {
-    public class RestApiService : IRestApiService
+    public class EatAppRestApiService
     {
         public const string JWT_BEARER_SCHEME = "Bearer";
-        private readonly HttpClient client = new HttpClient();
+        private readonly HttpClient client;
         private readonly JsonSerializerOptions JSON_OPT = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-        public RestApiService(IConfiguration config)
+        public EatAppRestApiService(HttpClient client, IConfiguration config)
         {
             client.BaseAddress = new Uri(config["ApiBaseUrl"]);
 
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            this.client = client;
         }
 
         public async Task<bool> IsAccessibleAsync()
@@ -150,7 +152,6 @@ namespace EatAppBlazor.Services
             }
         }
 
-
         public async Task<UserAuthResponse> UpdateUserAsync(string username, string email, string fullname)
         {
             try
@@ -214,7 +215,6 @@ namespace EatAppBlazor.Services
                 return null;
             }
         }
-
 
         public async Task<string> AddFnbAsync(string fnbName, FnbType fnbType)
         {

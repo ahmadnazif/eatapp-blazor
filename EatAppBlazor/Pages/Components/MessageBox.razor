@@ -1,0 +1,22 @@
+﻿<div>
+    <h2>@Title</h2>
+    <p>
+        @Message
+    </p>
+    <div>
+        @ChildContent
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Message { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+}

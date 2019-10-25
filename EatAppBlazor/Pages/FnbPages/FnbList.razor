@@ -5,9 +5,16 @@
 @using Services
 @using Extensions
 @using TempData
+@using EatAppBlazor.Pages.Components
 
-@inject IRestApiService api
+@*@inject IRestApiService api*@
+@inject EatAppRestApiService api
 @inject NavigationManager NavigationManager
+
+<MessageBox Title="Title" Message="This is a message">
+    <button>OK</button>
+    <button>Cancel</button>
+</MessageBox>
 
 <button class="btn btn-primary" @onclick="ListAll">Reload</button>
 @if (Session.IsExist)

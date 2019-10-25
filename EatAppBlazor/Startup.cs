@@ -31,7 +31,7 @@ namespace EatAppBlazor
             //services.AddMemoryCache();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<IRestApiService, RestApiService>();
+            services.AddHttpClient<EatAppRestApiService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
